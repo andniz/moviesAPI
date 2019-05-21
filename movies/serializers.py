@@ -1,0 +1,16 @@
+from rest_framework import serializers
+from .models import Movie, Comment
+
+
+class MovieSerializer(serializers.ModelSerializer):
+    comments_number = serializers.PrimaryKeyRelatedField(many=True)
+
+    class Meta:
+        model = Movie
+        fields = ('id', 'title', 'year', 'director')
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'movie_id')
