@@ -21,6 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'y4tqoixj(fqgoce433zu3!o-)o)j8-2*62+0*z$=7a*2nrh^z^'
+OMDB_API_KEY = '64a51546'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

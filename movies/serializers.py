@@ -3,7 +3,7 @@ from .models import Movie, Comment
 
 
 class MovieSerializer(serializers.ModelSerializer):
-    comments_number = serializers.PrimaryKeyRelatedField(many=True)
+    # comments_number = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Movie
