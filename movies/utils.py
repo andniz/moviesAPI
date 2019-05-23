@@ -16,6 +16,7 @@ def get_movie_details(title):
     dct = resp.json()
     if dct['Response'] == 'True':
         movie_details = dict()
+        movie_details['title'] = dct['Title']  # Getting it from OMDB API for proper capitalization of words in title
         movie_details['year'] = dct['Year']
         movie_details['director'] = dct['Director']
         return movie_details

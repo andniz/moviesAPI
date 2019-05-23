@@ -6,6 +6,7 @@ from django.http import HttpResponseBadRequest, HttpResponseServerError, JsonRes
 from django.db.models import Count
 from .serializers import MovieSerializer, CommentSerializer
 from .utils import get_movie_details, rank_movies_by_comments
+from django.utils.timezone import now
 # Create your views here.
 
 
@@ -22,11 +23,10 @@ class MoviesList(generics.ListCreateAPIView):
             movie_details = get_movie_details(title)
         except OMDBException as err:
             return HttpResponseServerError(f'<h1>{err.args[0]}</h1>')
-        movie_details['title'] = title
         return self.create(movie_details, *args, **kwargs)
 
-    def create(self, dict, *args, **kwargs):
-        serializer = self.get_serializer(data=dict)
+    def create(self, data, *args, **kwargs):
+        serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
@@ -37,10 +37,28 @@ class CommentsList(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    def get(self, request, *args, **kwargs):
+        movie_id = request.GET.get('movie_id', None)
+        if movie_id is None:
+            return self.list(request, *args, **kwargs)
+
+        comments = Comment.objects.filter(movie_id=movie_id)
+        print(comments)
+        # serializer = CommentSerializer(comments, many=True)
+        serializer = self.get_serializer(comments, many=True)
+        return JsonResponse(serializer.data, safe=False)
+
 
 def top_commented_movies(request):
-    movies = Movie.objects.all().annotate(num_comments=Count('comments'))
+    begin_date = request.GET.get('begin_date', None)
+    end_date = request.GET.get('end_date', now())
+    if begin_date is not None:
+        movies = Movie.objects.filter(comments__published_date__range=(begin_date, end_date)).annotate(num_comments=Count('comments'))
+    else:
+        movies = Movie.objects.filter(comments__published_date__lte=end_date).annotate(num_comments=Count('comments'))
+    movies_without_comments = [m for m in Movie.objects.all() if m not in movies]
     movies_stats = [{'movie_id': movie.id, 'total_comments': movie.num_comments} for movie in movies]
+    for i in movies_without_comments:
+        movies_stats.append({'movie_id': i.id, 'total_comments': 0})
     movies_stats = rank_movies_by_comments(movies_stats)
     return JsonResponse(movies_stats, safe=False)
-

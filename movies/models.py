@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.timezone import now
 
 # Create your models here.
 class Movie(models.Model):
@@ -16,6 +16,7 @@ class Movie(models.Model):
 
 class Comment(models.Model):
     movie_id = models.ForeignKey(Movie, related_name='comments', on_delete=models.CASCADE)
+    published_date = models.DateTimeField(default=now)
     text = models.TextField()
 
     def __str__(self):
