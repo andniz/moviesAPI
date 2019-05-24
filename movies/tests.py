@@ -53,7 +53,7 @@ class PostCommentsTestCase(TestCase):
         self.assertEqual(resp3.status_code, 400)
 
 
-class GetCommentsTestCase(TestCase):
+class GetTopCommentsTestCase(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
         Movie.objects.create(title='The Room', year=2003, director='Tommy Wiseau')
@@ -78,3 +78,16 @@ class GetCommentsTestCase(TestCase):
         self.assertEqual(resp_list[2]['total_comments'], 1)
         self.assertEqual(resp_list[2]['rank'], 2)
         self.assertEqual(resp_list[3], {'movie_id': 1, 'total_comments': 0, 'rank': 3})
+
+    def test_top_no_parameters(self):
+        req1 = self.factory.get('/top', {'begin_date': '2018-01-01 00:01'})
+        req2 = self.factory.get('/top', {'end_date': '2018-12-31 23:59'})
+        req3 = self.factory.get('/top')
+
+        resp1 = top_commented_movies(req1)
+        resp2 = top_commented_movies(req2)
+        resp3 = top_commented_movies(req3)
+
+        self.assertEqual(resp1.status_code, 400)
+        self.assertEqual(resp2.status_code, 400)
+        self.assertEqual(resp3.status_code, 400)

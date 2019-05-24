@@ -49,11 +49,11 @@ class CommentsList(generics.ListCreateAPIView):
 
 def top_commented_movies(request):
     begin_date = request.GET.get('begin_date', None)
-    end_date = request.GET.get('end_date', now())
-    if begin_date is not None:
-        movies = Movie.objects.filter(comments__published_date__range=(begin_date, end_date)).annotate(num_comments=Count('comments'))
-    else:
-        movies = Movie.objects.filter(comments__published_date__lte=end_date).annotate(num_comments=Count('comments'))
+    end_date = request.GET.get('end_date', None)
+    if begin_date is None or end_date is None:
+        return HttpResponseBadRequest('<h1>Please specify begin_date and end_date parameters in YYYY-MM-DD HH:MM format</h1>')
+    movies = Movie.objects.filter(comments__published_date__range=(begin_date, end_date)).annotate(num_comments=Count('comments'))
+
     movies_without_comments = [m for m in Movie.objects.all() if m not in movies]
     movies_stats = [{'movie_id': movie.id, 'total_comments': movie.num_comments} for movie in movies]
     for i in movies_without_comments:
