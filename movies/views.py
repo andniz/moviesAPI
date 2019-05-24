@@ -43,8 +43,6 @@ class CommentsList(generics.ListCreateAPIView):
             return self.list(request, *args, **kwargs)
 
         comments = Comment.objects.filter(movie_id=movie_id)
-        print(comments)
-        # serializer = CommentSerializer(comments, many=True)
         serializer = self.get_serializer(comments, many=True)
         return JsonResponse(serializer.data, safe=False)
 
