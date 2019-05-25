@@ -10,7 +10,7 @@ Download the files or fork the projects
 
 Activate virtual environment
 
-`pip install requirements.txt`
+`pip install -r requirements.txt`
 
 `python manage.py runserver`
 
@@ -25,7 +25,9 @@ returned. If there is no title parameter or if more than one parameter is provid
 with 400 Bad Request error. If the movie is not found through OMDBAPI, response status code should be
 500 Internal Server Error.
 
-GET method returns a list of movies in the database.
+GET method returns a list of movies in the database. Providing the ordering parameter with a value of 
+year or title will make the resulting JSON be sorted by the value. Providing the value with a minus 
+sign before it (ie. -title, -year) will reverse the sorting.
 
 ### /comments
 Supports POST and GET methods.
@@ -46,25 +48,97 @@ The server returns a list of movies, ranked by the number of comments within the
 ## Example usage
 `import requests`
 
-`url = 'http://127.0.0.1:8000  # Address if the server, in this example it's the localhost`
+`url = 'http://127.0.0.1:8000  # Address of the server, in this example it's the localhost`
+
+POST /movies:
 
 `response = requests.post(url + '/movies', data={'title': 'The Room'})`
 
+JSON Response:
 
-TU WSTAWIC RESPONSE
+`{
+    "id": 5,
+    "title": "The Room",
+    "year": 2003,
+    "director": "Tommy Wiseau"
+}`
+
+GET /movies:
 
 `response2 = reuqests.get(url + '/movies)`
 
-RESPONSE2
+`[
+    {
+        "id": 1,
+        "title": "Sharknado",
+        "year": 2013,
+        "director": "Anthony C. Ferrante"
+    },
+    {
+        "id": 2,
+        "title": "the room",
+        "year": 2003,
+        "director": "Tommy Wiseau"
+    },
+    {
+        "id": 3,
+        "title": "rubber",
+        "year": 2010,
+        "director": "Quentin Dupieux"
+    },
+    {
+        "id": 4,
+        "title": "Shrek 2",
+        "year": 2004,
+        "director": "Andrew Adamson, Kelly Asbury, Conrad Vernon"
+    },
+    {
+        "id": 5,
+        "title": "The Room",
+        "year": 2003,
+        "director": "Tommy Wiseau"
+    }
+]`
 
-`response3 = requests.post(url + '/comments', data={'movie_id': 1, 'text': 'Oh hi Mark)`
+POST /comments:
 
-RESPONSE3
+`response3 = requests.post(url + '/comments', data={'movie_id': 1, 'text': 'Oh hi Mark'})`
 
-`response4 = requests.get(url + '/comments', params={'movie_id': 1})`
+`{
+    "id": 6,
+    "text": "Oh hi Mark",
+    "movie_id": 5,
+    "published_date": "2019-05-25T21:14:07.645327Z"
+}`
 
-RESPONSE4
+GET /top
 
-`response5 = requests.get(url + '/top', params={'begin_date': '2019-04-02 20:30', 'end_date': '2019-04-02 22:00})`
+`response4 = requests.get(url + '/top', params={'begin_date': '2019-04-02 20:30', 'end_date': '2019-04-02 22:00})`
 
-RESPONSE5
+`[
+    {
+        "movie_id": 1,
+        "total_comments": 2,
+        "rank": 1
+    },
+    {
+        "movie_id": 2,
+        "total_comments": 2,
+        "rank": 1
+    },
+    {
+        "movie_id": 3,
+        "total_comments": 0,
+        "rank": 2
+    },
+    {
+        "movie_id": 4,
+        "total_comments": 0,
+        "rank": 2
+    },
+    {
+        "movie_id": 5,
+        "total_comments": 0,
+        "rank": 2
+    }
+]`

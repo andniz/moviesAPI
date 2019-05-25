@@ -1,4 +1,4 @@
-from rest_framework import generics, status
+from rest_framework import generics, status, filters
 from rest_framework.response import Response
 from .models import Movie, Comment
 from .utils import OMDBException
@@ -11,6 +11,8 @@ from .utils import get_movie_details, rank_movies_by_comments
 class MoviesList(generics.ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
+    filter_backends = (filters.OrderingFilter,)
+    ordering_fields = ('year', 'title')
 
     def post(self, request, *args, **kwargs):
         title = request.data.get('title', None)
