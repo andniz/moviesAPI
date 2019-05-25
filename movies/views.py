@@ -6,8 +6,6 @@ from django.http import HttpResponseBadRequest, HttpResponseServerError, JsonRes
 from django.db.models import Count
 from .serializers import MovieSerializer, CommentSerializer
 from .utils import get_movie_details, rank_movies_by_comments
-from django.utils.timezone import now
-# Create your views here.
 
 
 class MoviesList(generics.ListCreateAPIView):
