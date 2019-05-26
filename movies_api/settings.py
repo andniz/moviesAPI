@@ -25,8 +25,8 @@ SECRET_KEY = 'y4tqoixj(fqgoce433zu3!o-)o)j8-2*62+0*z$=7a*2nrh^z^'
 OMDB_API_KEY = '64a51546'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
+DEBUG = True
+DEBUG_PROPAGATE_EXCEPTIONS = True
 ALLOWED_HOSTS = []
 
 
@@ -125,3 +125,37 @@ USE_TZ = True
 STATIC_URL = '/static/'
 APPEND_SLASH = False
 django_heroku.settings(locals())
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': ('%(asctime)s [%(process)d] [%(levelname)s] ' +
+                       'pathname=%(pathname)s lineno=%(lineno)s ' +
+                       'funcname=%(funcName)s %(message)s'),
+            'datefmt': '%Y-%m-%d %H:%M:%S'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        }
+    },
+    'handlers': {
+        'null': {
+            'level': 'DEBUG',
+            'class': 'logging.NullHandler',
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        }
+    },
+    'loggers': {
+        'testlogger': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        }
+    }
+}
