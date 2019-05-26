@@ -19,7 +19,7 @@ Activate virtual environment
 ### /movies
 Supports POST and GET methods. 
 
-POST method requires one and only one parameter - title. Data for the movie with given title will be
+POST method requires one and only one parameter in the request body - title. Data for the movie with given title will be
 looked up via OMDBAPI and added to the application database. JSON containing the data of the movie will be
 returned. If there is no title parameter or if more than one parameter is provided, server responds
 with 400 Bad Request error. If the movie is not found through OMDBAPI, response status code should be
